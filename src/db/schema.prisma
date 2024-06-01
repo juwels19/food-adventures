@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model Restaurants {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  visited     Boolean  @default(false)
+  dateVisited String?
+  address     String
+  rating      String?
+  comments    String?
+  tags        String[]
+  imageUrl    String?
+  createdAt   String
+  updatedAt   String
+}
+
+model Things {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  complete      Boolean  @default(false)
+  dateCompleted String?
+  tags          String[]
+  comments      String?
+}
+
+model Tags {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  type             String
+  backgroundColour String
+  fontColour       String
+}
