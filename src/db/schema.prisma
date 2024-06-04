@@ -13,6 +13,8 @@ model Restaurants {
   visited     Boolean  @default(false)
   dateVisited String?
   address     String
+  lat         Float?
+  lng         Float?
   rating      String?
   comments    String?
   tags        String[]

@@ -80,6 +80,10 @@ export default function TagMultiSelect(props) {
       return;
     }
     mutate();
+    props.setTags([
+      ...props.tags,
+      { ...result, value: result.name, label: result.name },
+    ]);
   };
 
   return (
@@ -93,8 +97,8 @@ export default function TagMultiSelect(props) {
           return { ...tag, value: tag.name, label: tag.name };
         })
       }
-      value={props.value}
-      onChange={props.onChange}
+      value={props.tags}
+      onChange={(value) => props.setTags(value)}
       onCreateOption={(tagName) => handleTagCreation(tagName)}
       components={{
         MultiValueContainer: CustomContainer,

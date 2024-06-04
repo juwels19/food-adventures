@@ -1,9 +1,24 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import prisma from ".";
 import { createTagSchema } from "./schemas";
 
 export const getAllRestaurants = async () => {
   const restaurants = await prisma.restaurants.findMany();
+  return restaurants;
+};
+
+export const getAllVisitedRestaurants = async () => {
+  const restaurants = await prisma.restaurants.findMany({
+    where: { visited: { equals: true } },
+  });
+  return restaurants;
+};
+
+export const getNonVisitedRestaurants = async () => {
+  const restaurants = await prisma.restaurants.findMany({
+    where: { visited: { equals: false } },
+  });
   return restaurants;
 };
 
@@ -14,8 +29,10 @@ export const createRestaurant = async (restaurantData) => {
         ...restaurantData,
       },
     });
+    revalidatePath("/");
     return newRestaurant;
-  } catch {
+  } catch (err) {
+    console.log(err);
     return null;
   }
 };
@@ -27,6 +44,11 @@ export const getAllThings = async () => {
 
 export const getAllTags = async () => {
   const tags = await prisma.tags.findMany();
+  return tags;
+};
+
+export const getTagsByIds = async (ids) => {
+  const tags = await prisma.tags.findMany({ where: { id: { in: ids } } });
   return tags;
 };
 

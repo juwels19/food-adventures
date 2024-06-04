@@ -4,7 +4,6 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
 import { toast } from "sonner";
 import { UploadButton, UploadDropzone } from "@/components/common/uploadthing";
 import { cn } from "@/lib/utils";
@@ -36,10 +35,13 @@ import { Checkbox } from "../../ui/checkbox";
 import { Calendar } from "../../ui/calendar";
 import { createRestaurant } from "@/db/queries";
 import Image from "next/image";
+import AddressAutocomplete from "@/components/common/address-autocomplete";
 
 export default function AddRestaurantForm() {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tags, setTags] = useState([]);
+  const [fullLocationDetails, setFullLocationDetails] = useState();
 
   const addRestaurantForm = useForm({
     resolver: zodResolver(addRestaurantSchema),
@@ -58,21 +60,29 @@ export default function AddRestaurantForm() {
       ...(formData.visited && {
         dateVisited: dayjs(formData.dateVisited).format("YYYY-MM-DD"),
       }),
-      tags: addRestaurantForm.getValues("tags").map((tag) => tag.id) || [],
+      ...(tags.length > 0 && {
+        tags: tags.map((tag) => tag.id) || [],
+      }),
+      ...(fullLocationDetails && {
+        lat: fullLocationDetails.geometry.location.lat(),
+        lng: fullLocationDetails.geometry.location.lng(),
+      }),
       createdAt: timestamp,
       updatedAt: timestamp,
     };
     setIsSubmitting(true);
+    console.log(fullPayload);
     const result = await createRestaurant(fullPayload);
     if (!result) {
       setIsSubmitting(false);
       toast.error(
-        `Error: ${result.name} was not added to the list. Try again!`
+        `Error: ${formData.name} was not added to the list. Try again!`
       );
+      return;
     }
     setIsSubmitting(false);
     setIsOpen(false);
-    toast.success(`${result.name} has been added to the list!`);
+    toast.success(`${formData.name} has been added to the list!`);
   };
 
   return (
@@ -81,10 +91,13 @@ export default function AddRestaurantForm() {
       onOpenChange={() => {
         addRestaurantForm.reset({ visited: false });
         setIsOpen(!isOpen);
+        setTags([]);
+        setFullLocationDetails(null);
       }}
+      className="overflow-scroll"
     >
       <DialogTrigger asChild>
-        <Button className="text-md">Add Restaurant</Button>
+        <Button className="text-md">Add a new restaurant!</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -188,7 +201,13 @@ export default function AddRestaurantForm() {
                 <FormItem>
                   <FormLabel className="text-lg">Address</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    {/* <Input {...field} /> */}
+                    <AddressAutocomplete
+                      onPlaceSelect={(placeDetails) => {
+                        setFullLocationDetails(placeDetails);
+                        field.onChange(placeDetails?.formatted_address || "");
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -217,7 +236,11 @@ export default function AddRestaurantForm() {
                   <FormItem className="col-span-3 md:col-span-4">
                     <FormLabel className="text-lg">Tags</FormLabel>
                     <FormControl>
-                      <TagMultiSelect {...field} />
+                      <TagMultiSelect
+                        {...field}
+                        setTags={setTags}
+                        tags={tags}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

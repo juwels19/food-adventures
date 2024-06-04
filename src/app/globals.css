@@ -5,7 +5,7 @@
 
 @layer components {
   h1, h2, h3 {
-    @apply font-bold
+    @apply font-bold text-custom-text
   }
 
   h1 {
@@ -13,10 +13,14 @@
   }
 
   h2 {
-    @apply text-4xl
+    @apply text-3xl
   }
 
   h3 {
-    @apply text-4xl
+    @apply text-2xl
+  }
+
+  p {
+    @apply text-custom-text
   }
 }

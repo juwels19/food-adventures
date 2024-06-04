@@ -34,7 +34,7 @@ module.exports = withUt({
           background: "#F4FFF8",
           text: "#000F08",
           accent: "#49392C",
-          secondary: "#839073",
+          secondary: "#E1E4DD",
         },
       },
     },
