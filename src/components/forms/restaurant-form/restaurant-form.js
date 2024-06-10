@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { UploadButton, UploadDropzone } from "@/components/common/uploadthing";
+import { UploadButton } from "@/components/common/uploadthing";
 import { cn } from "@/lib/utils";
-import { addRestaurantSchema } from "@/db/schemas";
-import { Loader2 } from "lucide-react";
+import { restaurantSchema } from "@/db/schemas";
+import { Loader2, Edit } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -33,25 +33,31 @@ import { Input } from "../../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../../ui/popover";
 import { Checkbox } from "../../ui/checkbox";
 import { Calendar } from "../../ui/calendar";
-import { createRestaurant } from "@/db/queries";
+import { createRestaurant, updateRestaurant } from "@/db/queries";
 import Image from "next/image";
 import AddressAutocomplete from "@/components/common/address-autocomplete";
 
-export default function AddRestaurantForm() {
+export default function RestaurantForm({ mode, restaurant, initialTags }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(initialTags);
   const [fullLocationDetails, setFullLocationDetails] = useState();
 
-  const addRestaurantForm = useForm({
-    resolver: zodResolver(addRestaurantSchema),
-    defaultValues: {
-      visited: false,
+  const isEditing = mode === "edit";
+
+  const restaurantForm = useForm({
+    resolver: zodResolver(restaurantSchema),
+    mode: "onChange",
+    values: {
+      ...restaurant,
+      comments:
+        restaurant && restaurant?.comments ? restaurant.comments : undefined,
+      dateVisited: restaurant && dayjs(restaurant.dateVisited).toDate(),
     },
   });
 
-  const isDateVisitedDisabled = !addRestaurantForm.watch("visited");
-  const imageUrl = addRestaurantForm.watch("imageUrl");
+  const isDateVisitedDisabled = !restaurantForm.watch("visited");
+  const imageUrl = restaurantForm.watch("imageUrl");
 
   const onSubmit = async (formData) => {
     const timestamp = dayjs().format("YYYY-MM-DD");
@@ -64,62 +70,91 @@ export default function AddRestaurantForm() {
         tags: tags.map((tag) => tag.id) || [],
       }),
       ...(fullLocationDetails && {
-        lat: fullLocationDetails.geometry.location.lat(),
-        lng: fullLocationDetails.geometry.location.lng(),
+        lat:
+          restaurant.lat !== fullLocationDetails.geometry.location.lat()
+            ? fullLocationDetails.geometry.location.lat()
+            : restaurant.lat,
+        lng:
+          restaurant.lng !== fullLocationDetails.geometry.location.lng()
+            ? fullLocationDetails.geometry.location.lng()
+            : restaurant.lng,
       }),
-      createdAt: timestamp,
+      ...(!isEditing && {
+        createdAt: timestamp,
+      }),
       updatedAt: timestamp,
     };
     setIsSubmitting(true);
-    console.log(fullPayload);
-    const result = await createRestaurant(fullPayload);
+    const result = isEditing
+      ? await updateRestaurant(fullPayload, restaurant.id)
+      : await createRestaurant(fullPayload);
     if (!result) {
       setIsSubmitting(false);
       toast.error(
-        `Error: ${formData.name} was not added to the list. Try again!`
+        isEditing
+          ? `Error: ${formData.name} was not updated successfully. Try again!`
+          : `Error: ${formData.name} was not added to the list. Try again!`
       );
       return;
     }
     setIsSubmitting(false);
     setIsOpen(false);
-    toast.success(`${formData.name} has been added to the list!`);
+    toast.success(
+      isEditing
+        ? `${formData.name} was updated successfully!`
+        : `${formData.name} has been added to the list!`
+    );
   };
 
   return (
     <Dialog
       open={isOpen}
       onOpenChange={() => {
-        addRestaurantForm.reset({ visited: false });
+        if (!isEditing) {
+          restaurantForm.reset({ visited: false });
+          setTags([]);
+          setFullLocationDetails(null);
+        }
         setIsOpen(!isOpen);
-        setTags([]);
-        setFullLocationDetails(null);
       }}
       className="overflow-scroll"
     >
       <DialogTrigger asChild>
-        <Button className="text-md">Add a new restaurant!</Button>
+        {isEditing ? (
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute top-2 right-2 w-8 h-8 border-transparent"
+          >
+            <Edit size={18} />
+          </Button>
+        ) : (
+          <Button className="text-md">Add a new restaurant!</Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-xl">
-            Wowie! Another restaurant on the list :)
+            {isEditing
+              ? "Let's fix this restaurant!"
+              : "Wowie! Another restaurant on the list :)"}
           </DialogTitle>
         </DialogHeader>
-        <Form {...addRestaurantForm}>
+        <Form {...restaurantForm}>
           <form
-            onSubmit={addRestaurantForm.handleSubmit(onSubmit)}
+            onSubmit={restaurantForm.handleSubmit(onSubmit)}
             className="flex flex-col gap-2"
           >
             <div className="grid grid-cols-2 justify-start w-full gap-8">
               {/* RESTAURANT NAME */}
               <FormField
                 name="name"
-                control={addRestaurantForm.control}
+                control={restaurantForm.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-lg">Name</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -128,7 +163,7 @@ export default function AddRestaurantForm() {
               {/* DATE VISITED */}
               <FormField
                 name="dateVisited"
-                control={addRestaurantForm.control}
+                control={restaurantForm.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-lg">Date Visited</FormLabel>
@@ -175,7 +210,7 @@ export default function AddRestaurantForm() {
             {/* VISITED */}
             <FormField
               name="visited"
-              control={addRestaurantForm.control}
+              control={restaurantForm.control}
               render={({ field }) => (
                 <FormItem className="flex flex-row space-x-3 space-y-0 items-center justify-start">
                   <FormControl>
@@ -196,7 +231,7 @@ export default function AddRestaurantForm() {
             {/* ADDRESS */}
             <FormField
               name="address"
-              control={addRestaurantForm.control}
+              control={restaurantForm.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-lg">Address</FormLabel>
@@ -207,6 +242,7 @@ export default function AddRestaurantForm() {
                         setFullLocationDetails(placeDetails);
                         field.onChange(placeDetails?.formatted_address || "");
                       }}
+                      value={field.value}
                     />
                   </FormControl>
                   <FormMessage />
@@ -217,12 +253,12 @@ export default function AddRestaurantForm() {
               {/* RATING */}
               <FormField
                 name="rating"
-                control={addRestaurantForm.control}
+                control={restaurantForm.control}
                 render={({ field }) => (
                   <FormItem className="col-span-2 md:col-span-1">
                     <FormLabel className="text-lg">Rating</FormLabel>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} value={field.value} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -231,7 +267,7 @@ export default function AddRestaurantForm() {
               {/* TAGS */}
               <FormField
                 name="tags"
-                control={addRestaurantForm.control}
+                control={restaurantForm.control}
                 render={({ field }) => (
                   <FormItem className="col-span-3 md:col-span-4">
                     <FormLabel className="text-lg">Tags</FormLabel>
@@ -250,7 +286,7 @@ export default function AddRestaurantForm() {
             {/* COMMENTS */}
             <FormField
               name="comments"
-              control={addRestaurantForm.control}
+              control={restaurantForm.control}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-lg">Comments</FormLabel>
@@ -274,7 +310,7 @@ export default function AddRestaurantForm() {
               {/* IMAGE */}
               <FormField
                 name="imageUrl"
-                control={addRestaurantForm.control}
+                control={restaurantForm.control}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-lg">Image Upload</FormLabel>
@@ -289,8 +325,8 @@ export default function AddRestaurantForm() {
                         endpoint="imageUploader"
                         onClientUploadComplete={(res) => {
                           // Do something with the response
-                          addRestaurantForm.setValue("imageUrl", res[0].url);
-                          addRestaurantForm.clearErrors("imageUrl");
+                          restaurantForm.setValue("imageUrl", res[0].url);
+                          restaurantForm.clearErrors("imageUrl");
                           toast.success("Image uploaded successfully!");
                         }}
                         onUploadError={() => {
@@ -329,7 +365,7 @@ export default function AddRestaurantForm() {
                 {isSubmitting && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
-                Create
+                {isEditing ? "Update" : "Create"}
               </Button>
             </DialogFooter>
           </form>

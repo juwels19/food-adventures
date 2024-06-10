@@ -40,7 +40,7 @@ const additionalRestaurantSchema = z
     }
   });
 
-export const addRestaurantSchema = z.intersection(
+export const restaurantSchema = z.intersection(
   baseRestaurantSchema,
   additionalRestaurantSchema
 );

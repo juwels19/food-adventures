@@ -9,6 +9,7 @@ import { cn, fetcher } from "@/lib/utils";
 import { createTag } from "@/db/queries";
 import { TAG_TYPES } from "@/lib/constants";
 import { TAG_COLOURS } from "@/lib/tagColours";
+import { useEffect, useState } from "react";
 
 function CustomTag(props) {
   const { innerRef, innerProps, children, data } = props;
@@ -55,7 +56,7 @@ function CustomContainer({ innerRef, innerProps, children }) {
 
 export default function TagMultiSelect(props) {
   const {
-    data: tagOptions,
+    data: allTagOptions,
     isLoading,
     isValidating,
     mutate,
@@ -92,8 +93,8 @@ export default function TagMultiSelect(props) {
       isDisabled={isLoading || isValidating}
       isClearable={false}
       options={
-        tagOptions &&
-        tagOptions.map((tag) => {
+        allTagOptions &&
+        allTagOptions.map((tag) => {
           return { ...tag, value: tag.name, label: tag.name };
         })
       }

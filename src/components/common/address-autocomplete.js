@@ -5,7 +5,7 @@ import { Input } from "../ui/input";
 
 // This is a custom built autocomplete component using the "Autocomplete Service" for predictions
 // and the "Places Service" for place details
-export default function AddressAutocomplete({ onPlaceSelect }) {
+export default function AddressAutocomplete({ onPlaceSelect, value }) {
   const map = useMap();
   const places = useMapsLibrary("places");
   const geocoding = useMapsLibrary("geocoding");
@@ -23,7 +23,7 @@ export default function AddressAutocomplete({ onPlaceSelect }) {
 
   const [predictionResults, setPredictionResults] = useState([]);
 
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(value || "");
 
   useEffect(() => {
     if (!places || !map || !geocoding) return;

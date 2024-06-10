@@ -1,14 +1,9 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { AdvancedMarker, Map, Marker, Pin } from "@vis.gl/react-google-maps";
 import { MAP_VALUES } from "@/lib/constants";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
-import { PinIcon, X } from "lucide-react";
+import { PinIcon, Pizza, PizzaIcon, Utensils, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function RestaurantsMap({ restaurants }) {
@@ -41,7 +36,9 @@ export default function RestaurantsMap({ restaurants }) {
               background={restaurant.visited ? "#16a34a" : undefined}
               glyphColor={restaurant.visited ? "#3f6212" : undefined}
               borderColor={restaurant.visited ? "#3f6212" : undefined}
-            />
+            >
+              <Utensils color="black" size={16} />
+            </Pin>
           </AdvancedMarker>
           // <Marker
           //   key={restaurant.name}

@@ -37,6 +37,24 @@ export const createRestaurant = async (restaurantData) => {
   }
 };
 
+export const updateRestaurant = async (restaurantData, id) => {
+  try {
+    const updatedRestaurant = await prisma.restaurants.update({
+      where: {
+        id,
+      },
+      data: {
+        ...restaurantData,
+      },
+    });
+    revalidatePath("/");
+    return updatedRestaurant;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
 export const getAllThings = async () => {
   const things = await prisma.things.findMany();
   return things;
