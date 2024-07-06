@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { AdvancedMarker, Map, Marker, Pin } from "@vis.gl/react-google-maps";
 import { MAP_VALUES } from "@/lib/constants";
 import { PinIcon, Pizza, PizzaIcon, Utensils, X } from "lucide-react";

@@ -22,30 +22,31 @@ export default async function RestaurantCard({ restaurant }) {
   return (
     <div className="relative">
       <Card className="w-full max-w-sm rounded-lg overflow-hidden shadow-lg">
-        {restaurant.imageUrl && (
+        {restaurant?.imageUrl && (
           <Image
             src={restaurant.imageUrl}
             height={200}
             width={300}
             className="w-full h-36 md:h-64 object-cover"
+            alt={`picture of ${restaurant.name}`}
           />
         )}
         <CardContent className="flex flex-col pt-4 gap-2">
           <div className="flex flex-row justify-between items-center">
-            <CardTitle>{restaurant.name}</CardTitle>
-            {restaurant.rating && (
+            <CardTitle>{restaurant?.name}</CardTitle>
+            {restaurant?.rating && (
               <div className="flex flex-row gap-2 items-center">
                 <Star size={20} />
                 <p className="text-lg">{restaurant.rating} / 10</p>
               </div>
             )}
           </div>
-          {restaurant.comments && (
+          {restaurant?.comments && (
             <CardDescription className="text-md leading-tight">
               {restaurant.comments}
             </CardDescription>
           )}
-          {tags.length > 0 && (
+          {tags?.length > 0 && (
             <div className="flex flex-row gap-2">
               <Utensils size={20} />
               {tags.map((tag) => (
@@ -59,7 +60,7 @@ export default async function RestaurantCard({ restaurant }) {
             <MapPinIcon size={22} />
             {restaurant.address}
           </div>
-          {restaurant.dateVisited && (
+          {restaurant?.dateVisited && (
             <div className="flex flex-row gap-2 items-center">
               <Calendar size={20} />
               Visited:{" "}
@@ -68,7 +69,13 @@ export default async function RestaurantCard({ restaurant }) {
           )}
         </CardContent>
       </Card>
-      <RestaurantForm mode="edit" restaurant={restaurant} initialTags={tags} />
+      {restaurant?.visited && (
+        <RestaurantForm
+          mode="edit"
+          restaurant={restaurant}
+          initialTags={tags}
+        />
+      )}
     </div>
   );
 }

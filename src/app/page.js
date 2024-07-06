@@ -30,16 +30,14 @@ export default async function Home() {
         {visitedRestaurants.map((restaurant) => (
           <RestaurantCard key={restaurant.name} restaurant={restaurant} />
         ))}
-        {/* <RestaurantCard
-          restaurant={visitedRestaurants[0]}
-        /> */}
       </div>
       <h2>Places we still need to try</h2>
-      {/* <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
         {nonVisitedRestaurants.map((restaurant) => (
           <RestaurantCard key={restaurant.name} restaurant={restaurant} />
         ))}
-      </div> */}
+      </div>
+      {/* <RestaurantCard restaurant={nonVisitedRestaurants[0]} /> */}
     </div>
   );
 }

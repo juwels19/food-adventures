@@ -66,6 +66,7 @@ export const getAllTags = async () => {
 };
 
 export const getTagsByIds = async (ids) => {
+  if (ids.length === 0) return [];
   const tags = await prisma.tags.findMany({ where: { id: { in: ids } } });
   return tags;
 };

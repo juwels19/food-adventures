@@ -40,7 +40,7 @@ import AddressAutocomplete from "@/components/common/address-autocomplete";
 export default function RestaurantForm({ mode, restaurant, initialTags }) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tags, setTags] = useState(initialTags);
+  const [tags, setTags] = useState(null);
   const [fullLocationDetails, setFullLocationDetails] = useState();
 
   const isEditing = mode === "edit";
@@ -60,6 +60,8 @@ export default function RestaurantForm({ mode, restaurant, initialTags }) {
   const imageUrl = restaurantForm.watch("imageUrl");
 
   const onSubmit = async (formData) => {
+    const lat = await fullLocationDetails.geometry.location.lat();
+    const lng = await fullLocationDetails.geometry.location.lng();
     const timestamp = dayjs().format("YYYY-MM-DD");
     const fullPayload = {
       ...formData,
@@ -70,14 +72,8 @@ export default function RestaurantForm({ mode, restaurant, initialTags }) {
         tags: tags.map((tag) => tag.id) || [],
       }),
       ...(fullLocationDetails && {
-        lat:
-          restaurant.lat !== fullLocationDetails.geometry.location.lat()
-            ? fullLocationDetails.geometry.location.lat()
-            : restaurant.lat,
-        lng:
-          restaurant.lng !== fullLocationDetails.geometry.location.lng()
-            ? fullLocationDetails.geometry.location.lng()
-            : restaurant.lng,
+        lat: restaurant?.lat !== lat ? lat : restaurant.lat,
+        lng: restaurant?.lng !== lng ? lng : restaurant.lng,
       }),
       ...(!isEditing && {
         createdAt: timestamp,
@@ -105,6 +101,12 @@ export default function RestaurantForm({ mode, restaurant, initialTags }) {
         : `${formData.name} has been added to the list!`
     );
   };
+
+  useEffect(() => {
+    if (initialTags?.length > 0) setTags(initialTags);
+  }, []);
+
+  console.log(fullLocationDetails);
 
   return (
     <Dialog
