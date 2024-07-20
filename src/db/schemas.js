@@ -1,8 +1,12 @@
 import { z } from "zod";
 
 const baseRestaurantSchema = z.object({
-  name: z.string().refine((value) => value !== "", "Required"),
-  address: z.string().refine((value) => value !== "", "Required"),
+  name: z
+    .string({ message: "Name is required" })
+    .refine((value) => value !== "", "Name is required"),
+  address: z
+    .string({ message: "Address is required" })
+    .refine((value) => value !== "", "Address is required"),
   comments: z.string().optional(),
 });
 
@@ -13,28 +17,28 @@ const additionalRestaurantSchema = z
     rating: z
       .string()
       .optional()
-      .refine((value) => value !== "", "Required"),
+      .refine((value) => value !== "", "Rating required"),
     imageUrl: z.string().optional(),
   })
   .superRefine((values, ctx) => {
     if (values.visited && !values.dateVisited) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Required",
+        message: "Date visited is required for a visited restaurant!",
         path: ["dateVisited"],
       });
     }
     if (values.visited && !values.rating) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Required",
+        message: "Rating is required for a visited restaurant!",
         path: ["rating"],
       });
     }
     if (values.visited && !values.imageUrl) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: "Required",
+        message: "Image is required for a visited restaurant!",
         path: ["imageUrl"],
       });
     }

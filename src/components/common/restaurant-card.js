@@ -10,7 +10,6 @@ import {
 import { Badge } from "../ui/badge";
 import { getTagsByIds } from "@/db/queries";
 import dayjs from "dayjs";
-import RestaurantForm from "../forms/restaurant-form";
 
 export default async function RestaurantCard({ restaurant }) {
   const tags = (await getTagsByIds(restaurant.tags)).map((tag) => ({
@@ -21,7 +20,7 @@ export default async function RestaurantCard({ restaurant }) {
 
   return (
     <div className="relative">
-      <Card className="w-full max-w-sm rounded-lg overflow-hidden shadow-lg">
+      <Card className="w-full h-full sm:max-md:max-w-sm rounded-lg overflow-hidden shadow-lg">
         {restaurant?.imageUrl && (
           <Image
             src={restaurant.imageUrl}
@@ -36,7 +35,7 @@ export default async function RestaurantCard({ restaurant }) {
             <CardTitle>{restaurant?.name}</CardTitle>
             {restaurant?.rating && (
               <div className="flex flex-row gap-2 items-center">
-                <Star size={20} />
+                <Star size={20} color="gold" fill="gold" />
                 <p className="text-lg">{restaurant.rating} / 10</p>
               </div>
             )}
@@ -58,24 +57,18 @@ export default async function RestaurantCard({ restaurant }) {
           )}
           <div className="flex flex-row gap-2 items-center justify-start">
             <MapPinIcon size={22} />
-            {restaurant.address}
+            <span className="truncate">{restaurant.address}</span>
           </div>
           {restaurant?.dateVisited && (
             <div className="flex flex-row gap-2 items-center">
               <Calendar size={20} />
-              Visited:{" "}
-              {dayjs(restaurant.dateVisited).format("dddd MMMM D, YYYY")}
+              {`Visited on ${dayjs(restaurant.dateVisited).format(
+                "dddd MMMM D, YYYY"
+              )}`}
             </div>
           )}
         </CardContent>
       </Card>
-      {restaurant?.visited && (
-        <RestaurantForm
-          mode="edit"
-          restaurant={restaurant}
-          initialTags={tags}
-        />
-      )}
     </div>
   );
 }

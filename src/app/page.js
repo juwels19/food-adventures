@@ -1,5 +1,4 @@
 import RestaurantCard from "@/components/common/restaurant-card";
-import RestaurantForm from "@/components/forms/restaurant-form";
 import {
   getAllRestaurants,
   getAllVisitedRestaurants,
@@ -7,6 +6,7 @@ import {
   getRestaurantTags,
 } from "@/db/queries";
 import RestaurantsMap from "@/components/maps/restaurants-maps";
+import PageHeader from "@/components/common/page-header";
 
 export default async function Home() {
   const allRestaurants = await getAllRestaurants();
@@ -21,12 +21,11 @@ export default async function Home() {
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-col md:flex-row justify-between gap-4">
-        <h1>Sabrina and Julian&apos;s Food Adventures</h1>
-        <RestaurantForm />
+        <PageHeader text={`Sabrina and Julian's Food Adventures`} />
       </div>
       <RestaurantsMap restaurants={allRestaurants} />
-      <h2>Places we&apos;ve been!</h2>
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center">
+      <h2>{`Places we've been!`}</h2>
+      <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-center lg:justify-items-stretch">
         {visitedRestaurants.map((restaurant) => (
           <RestaurantCard key={restaurant.name} restaurant={restaurant} />
         ))}
@@ -37,7 +36,6 @@ export default async function Home() {
           <RestaurantCard key={restaurant.name} restaurant={restaurant} />
         ))}
       </div>
-      {/* <RestaurantCard restaurant={nonVisitedRestaurants[0]} /> */}
     </div>
   );
 }

@@ -2,11 +2,17 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 import { Input } from "../ui/input";
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../ui/command";
 
 // This is a custom built autocomplete component using the "Autocomplete Service" for predictions
 // and the "Places Service" for place details
 export default function AddressAutocomplete({ onPlaceSelect, value }) {
-  console.log(value);
   const map = useMap();
   const places = useMapsLibrary("places");
   const geocoding = useMapsLibrary("geocoding");
@@ -134,4 +140,27 @@ export default function AddressAutocomplete({ onPlaceSelect, value }) {
       )}
     </React.Fragment>
   );
+
+  // return (
+  //   <Command>
+  //     <CommandInput
+  //       value={inputValue}
+  //       onInput={(event) => onInputChange(event)}
+  //       placeholder="Enter an address..."
+  //     />
+  //     <CommandList>
+  //       <CommandGroup>
+  //         {predictionResults.slice(0, 5).map(({ place_id, description }) => (
+  //           <CommandItem
+  //             key={place_id}
+  //             className="hover:bg-slate-100 rounded-md p-2"
+  //             onClick={() => handleSuggestionClick(place_id)}
+  //           >
+  //             {description}
+  //           </CommandItem>
+  //         ))}
+  //       </CommandGroup>
+  //     </CommandList>
+  //   </Command>
+  // );
 }

@@ -7,6 +7,8 @@ import { ourFileRouter } from "./api/uploadthing/core";
 
 import "./globals.css";
 
+import backgroundSVG from "../../public/background.svg";
+
 const crimsonPro = Crimson_Pro({
   subsets: ["latin"],
 });
@@ -22,7 +24,10 @@ export default function RootLayout({ children }) {
       <body className={crimsonPro.className}>
         <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <Providers>
-          <main className="flex min-h-screen flex-col items-center justify-between p-10 bg-custom-background text-custom-text">
+          <main
+            className="flex min-h-screen flex-col items-center justify-between p-4 md:p-6 bg-custom-background text-custom-text"
+            style={{ backgroundImage: `url(${backgroundSVG.src})` }}
+          >
             {children}
           </main>
         </Providers>
