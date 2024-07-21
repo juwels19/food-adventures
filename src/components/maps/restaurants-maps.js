@@ -70,7 +70,7 @@ export default function RestaurantsMap({ restaurants }) {
       </div>
 
       {/* MAP LEGEND */}
-      <div className="absolute bg-custom-accent right-4 top-4 font-sm md:font-md font-semibold text-custom-background rounded-md p-2">
+      <div className="absolute hidden md:block bg-custom-accent right-4 top-4 font-sm md:font-md font-semibold text-custom-background rounded-md p-2">
         Legend:
         <div className="flex flex-col gap-1 md:gap-2">
           <div className="flex flex-row mt-1 gap-1">

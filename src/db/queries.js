@@ -8,6 +8,13 @@ export const getAllRestaurants = async () => {
   return restaurants;
 };
 
+export const getRestaurant = async (id) => {
+  const restaurant = await prisma.restaurants.findUnique({
+    where: { id },
+  });
+  return restaurant;
+};
+
 export const getAllVisitedRestaurants = async () => {
   const restaurants = await prisma.restaurants.findMany({
     where: { visited: { equals: true } },
