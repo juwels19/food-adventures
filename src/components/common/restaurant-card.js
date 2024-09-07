@@ -43,8 +43,8 @@ export default async function RestaurantCard({ restaurant }) {
           {restaurant?.imageUrl && (
             <Image
               src={restaurant.imageUrl}
-              height={200}
-              width={300}
+              height={300}
+              width={400}
               className="w-full h-36 md:h-64 object-cover"
               alt={`picture of ${restaurant.name}`}
             />
