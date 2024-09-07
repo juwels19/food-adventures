@@ -3,14 +3,15 @@
 import React from "react";
 import { Map, Marker } from "@vis.gl/react-google-maps";
 import { MAP_VALUES } from "@/lib/constants";
+import { cn } from "@/lib/utils";
 
-export default function SingleLocationMap({ location }) {
+export default function SingleLocationMap({ location, className }) {
   const lat = location?.geometry.location.lat();
   const lng = location?.geometry.location.lng();
   return (
     <Map
       // style={{ width: "100%", height: "35vh" }}
-      className="w-full h-[20vh] md:h-[30vh]"
+      className={cn("w-full h-[20vh] md:h-[30vh]", className)}
       defaultCenter={{
         lat: MAP_VALUES.TORONTO.LAT,
         lng: MAP_VALUES.TORONTO.LNG,

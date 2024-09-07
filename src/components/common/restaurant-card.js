@@ -6,7 +6,14 @@ import Link from "next/link";
 import { getTagsByIds } from "@/db/queries";
 import ROUTES from "@/lib/routes";
 
-import { Star, Utensils, MapPinIcon, Calendar } from "lucide-react";
+import {
+  Star,
+  Utensils,
+  MapPinIcon,
+  Calendar,
+  Pencil,
+  Trash,
+} from "lucide-react";
 import {
   Card,
   CardContent,
@@ -14,6 +21,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { DeleteRestaurantModal, EditRestaurantModal } from "./modals";
 
 export default async function RestaurantCard({ restaurant }) {
   const tags = (await getTagsByIds(restaurant.tags)).map((tag) => ({
@@ -23,9 +32,14 @@ export default async function RestaurantCard({ restaurant }) {
   }));
 
   return (
-    <div className="relative">
-      <Link href={`${ROUTES.VIEW_RESTAURANT_BASE}/${restaurant.id}`}>
-        <Card className="w-full h-full sm:max-md:max-w-sm rounded-lg overflow-hidden hover:shadow-lg cursor-pointer transition-shadow">
+    <>
+      <div className="relative">
+        <Card className="group w-full h-full sm:max-md:max-w-sm rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+          <div className="flex flex-row gap-2 absolute right-2 top-2 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-100 ease-in-out">
+            <EditRestaurantModal restaurant={restaurant} initialTags={tags} />
+            <DeleteRestaurantModal name={restaurant.name} id={restaurant.id} />
+          </div>
+
           {restaurant?.imageUrl && (
             <Image
               src={restaurant.imageUrl}
@@ -37,11 +51,15 @@ export default async function RestaurantCard({ restaurant }) {
           )}
           <CardContent className="flex flex-col pt-4 gap-2">
             <div className="flex flex-row justify-between items-center">
-              <CardTitle>{restaurant?.name}</CardTitle>
+              <CardTitle className="truncate leading-normal">
+                {restaurant?.name}
+              </CardTitle>
               {restaurant?.rating && (
-                <div className="flex flex-row gap-2 items-center">
+                <div className="flex flex-row gap-2 items-center text-nowrap">
                   <Star size={20} color="gold" fill="gold" />
-                  <p className="text-lg">{restaurant.rating} / 10</p>
+                  <p className="text-lg font-semibold">
+                    {restaurant.rating} / 10
+                  </p>
                 </div>
               )}
             </div>
@@ -77,7 +95,7 @@ export default async function RestaurantCard({ restaurant }) {
             )}
           </CardContent>
         </Card>
-      </Link>
-    </div>
+      </div>
+    </>
   );
 }

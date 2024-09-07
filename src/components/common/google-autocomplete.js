@@ -1,18 +1,14 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
-import { Input } from "../ui/input";
-import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "../ui/command";
+import { cn } from "@/lib/utils";
+
+import { Command, CommandInput, CommandItem, CommandList } from "../ui/command";
+import "../../styles/overrides.css";
 
 // This is a custom built autocomplete component using the "Autocomplete Service" for predictions
 // and the "Places Service" for place details
-export default function AddressAutocomplete({ onPlaceSelect, value }) {
+export default function GoogleAutocomplete({ onPlaceSelect, value }) {
   const map = useMap();
   const places = useMapsLibrary("places");
   const geocoding = useMapsLibrary("geocoding");
@@ -31,6 +27,8 @@ export default function AddressAutocomplete({ onPlaceSelect, value }) {
   const [predictionResults, setPredictionResults] = useState([]);
 
   const [inputValue, setInputValue] = useState(value || "");
+
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   useEffect(() => {
     if (!places || !map || !geocoding) return;
@@ -70,12 +68,12 @@ export default function AddressAutocomplete({ onPlaceSelect, value }) {
 
   const onInputChange = useCallback(
     (event) => {
-      const value = event.target?.value;
-
+      const value = event;
       setInputValue(value);
       fetchPredictions(value);
-      if (value === "") {
+      if (!value || value === "") {
         onPlaceSelect(null);
+        setPopoverOpen(false);
       }
     },
     [fetchPredictions]
@@ -92,7 +90,7 @@ export default function AddressAutocomplete({ onPlaceSelect, value }) {
       };
 
       const detailsRequestCallback = (placeDetails) => {
-        setInputValue(placeDetails?.formatted_address ?? "");
+        setInputValue(placeDetails?.name ?? "");
         setPredictionResults([]);
         setSessionToken(new places.AutocompleteSessionToken());
         geocodeAddress(placeDetails);
@@ -116,51 +114,49 @@ export default function AddressAutocomplete({ onPlaceSelect, value }) {
     geocoderService.geocode(geocodeRequestOptions, geocodeRequestCallback);
   });
 
+  useEffect(() => {
+    if (predictionResults.length > 0) {
+      setPopoverOpen(true);
+    } else {
+      setPopoverOpen(false);
+    }
+  }, [predictionResults]);
+
   return (
-    <React.Fragment>
-      <Input
-        value={inputValue}
-        onInput={(event) => onInputChange(event)}
-        placeholder="Enter an address..."
-      />
-      {predictionResults.length > 0 && (
-        <ul className="custom-list">
+    <Command
+      open={popoverOpen}
+      onOpenChange={setPopoverOpen}
+      shouldFilter={false}
+      loop
+      className="overflow-visible h-max relative border border-slate-200 has-[:focus-visible]:outline-none has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-slate-950 has-[:focus-visible]:ring-offset-2"
+    >
+      <div>
+        <CommandInput
+          value={inputValue}
+          onValueChange={(e) => onInputChange(e)}
+          placeholder="Start typing..."
+        />
+      </div>
+      <div
+        className={cn(
+          popoverOpen ? "opacity-100" : "opacity-0",
+          "absolute bg-white z-10 w-full top-[51px] border border-slate-200 rounded-lg transition-opacity ease-in-out duration-100"
+        )}
+      >
+        <CommandList className="shadow-lg rounded-md">
           {predictionResults.slice(0, 3).map(({ place_id, description }) => {
             return (
-              <li
+              <CommandItem
                 key={place_id}
-                className="hover:bg-slate-100 rounded-md p-2"
-                onClick={() => handleSuggestionClick(place_id)}
+                className="hover:bg-slate-100 rounded-md p-3"
+                onSelect={() => handleSuggestionClick(place_id)}
               >
                 {description}
-              </li>
+              </CommandItem>
             );
           })}
-        </ul>
-      )}
-    </React.Fragment>
+        </CommandList>
+      </div>
+    </Command>
   );
-
-  // return (
-  //   <Command>
-  //     <CommandInput
-  //       value={inputValue}
-  //       onInput={(event) => onInputChange(event)}
-  //       placeholder="Enter an address..."
-  //     />
-  //     <CommandList>
-  //       <CommandGroup>
-  //         {predictionResults.slice(0, 5).map(({ place_id, description }) => (
-  //           <CommandItem
-  //             key={place_id}
-  //             className="hover:bg-slate-100 rounded-md p-2"
-  //             onClick={() => handleSuggestionClick(place_id)}
-  //           >
-  //             {description}
-  //           </CommandItem>
-  //         ))}
-  //       </CommandGroup>
-  //     </CommandList>
-  //   </Command>
-  // );
 }

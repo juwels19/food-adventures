@@ -44,7 +44,8 @@ export const createRestaurant = async (restaurantData) => {
   }
 };
 
-export const updateRestaurant = async (restaurantData, id) => {
+export const updateRestaurant = async (restaurantData, id, path) => {
+  console.log(restaurantData);
   try {
     const updatedRestaurant = await prisma.restaurants.update({
       where: {
@@ -54,8 +55,22 @@ export const updateRestaurant = async (restaurantData, id) => {
         ...restaurantData,
       },
     });
-    revalidatePath("/");
+    if (revalidatePath) revalidatePath(path);
     return updatedRestaurant;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const deleteRestaurant = async (restaurantId) => {
+  try {
+    await prisma.restaurants.delete({
+      where: {
+        id: restaurantId,
+      },
+    });
+    revalidatePath("/");
   } catch (err) {
     console.log(err);
     return null;

@@ -1,4 +1,5 @@
 "use client";
+import { useScreenSize } from "@/hooks";
 import { useTheme } from "next-themes"
 import { Toaster as Sonner } from "sonner"
 
@@ -7,10 +8,13 @@ const Toaster = ({
 }) => {
   const { theme = "system" } = useTheme()
 
+  const { isMobile } = useScreenSize();
+
   return (
     (<Sonner
       theme={theme}
       className="toaster group"
+      position={isMobile ? "bottom-center" : "top-right"}
       toastOptions={{
         classNames: {
           toast:

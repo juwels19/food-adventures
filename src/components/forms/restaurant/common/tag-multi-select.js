@@ -9,7 +9,6 @@ import { cn, fetcher } from "@/lib/utils";
 import { createTag } from "@/db/queries";
 import { TAG_TYPES } from "@/lib/constants";
 import { TAG_COLOURS } from "@/lib/tagColours";
-import { useEffect, useState } from "react";
 
 function CustomTag(props) {
   const { innerRef, innerProps, children, data } = props;
