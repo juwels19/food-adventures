@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Loader2, Trash } from "lucide-react";
 import { toast } from "sonner";
+import { deleteTag } from "@/db/queries";
 
 export default function DeleteTagModal({ tag, disabled }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,9 +24,15 @@ export default function DeleteTagModal({ tag, disabled }) {
   const onConfirmClick = async () => {
     setIsDeleting(true);
 
+    const result = await deleteTag(tag.id);
+
     setIsDeleting(false);
     setIsModalOpen(false);
-    toast.success("Tag deleted successfully!");
+    if (result.ok) {
+      toast.success("Tag deleted successfully!");
+    } else {
+      toast.error(result.message);
+    }
   };
   return (
     <AlertDialog open={isModalOpen} onOpenChange={setIsModalOpen}>

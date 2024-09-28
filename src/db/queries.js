@@ -150,6 +150,36 @@ export const updateTag = async (id, tagData) => {
   revalidatePath("/tags");
 };
 
+export const deleteTag = async (tagId) => {
+  try {
+    const tag = await prisma.tags.findUnique({
+      where: {
+        id: tagId,
+      },
+      include: {
+        _count: {
+          select: { restaurants: true },
+        },
+      },
+    });
+
+    if (tag._count.restaurants !== 0) {
+      return { ok: false, message: "This tag is still in use." };
+    }
+
+    await prisma.tags.delete({
+      where: {
+        id: tagId,
+      },
+    });
+
+    revalidatePath("/tags");
+    return { ok: true, message: "TAG DELETED SUCCESSFULLY" };
+  } catch {
+    return { ok: false, message: "Database error. Please try again." };
+  }
+};
+
 export const getRestaurantTags = async () => {
   const restaurantTags = await prisma.tags.findMany({
     where: { type: { equals: "restaurant" } },
