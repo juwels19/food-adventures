@@ -125,6 +125,7 @@ export const createTag = async (tagData) => {
         fontColour: tagData.fontColour,
       },
     });
+    revalidatePath("/tags");
     return newTag;
   } catch {
     return null;
