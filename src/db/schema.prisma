@@ -17,7 +17,8 @@ model Restaurants {
   lng         Float?
   rating      String?
   comments    String?
-  tags        String[]
+  tags        Tags[]   @relation(fields: [tagIds], references: [id])
+  tagIds      String[] @db.ObjectId
   imageUrl    String?
   createdAt   String
   updatedAt   String
@@ -33,9 +34,11 @@ model Things {
 }
 
 model Tags {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
   name             String
   type             String
   backgroundColour String
   fontColour       String
+  restaurants      Restaurants[] @relation(fields: [restaurantIds], references: [id])
+  restaurantIds    String[]      @db.ObjectId
 }

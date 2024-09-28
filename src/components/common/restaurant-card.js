@@ -25,7 +25,7 @@ import { Button } from "../ui/button";
 import { DeleteRestaurantModal, EditRestaurantModal } from "./modals";
 
 export default async function RestaurantCard({ restaurant }) {
-  const tags = (await getTagsByIds(restaurant.tags)).map((tag) => ({
+  const tags = restaurant.tags.map((tag) => ({
     ...tag,
     label: tag.name,
     value: tag.name,

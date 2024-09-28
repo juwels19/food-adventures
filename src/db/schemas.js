@@ -55,3 +55,7 @@ export const createTagSchema = z.object({
   backgroundColour: z.string(),
   fontColour: z.string(),
 });
+
+export const editTagSchema = z.object({
+  name: z.string({ required_error: "Name is required" }),
+});

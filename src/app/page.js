@@ -15,7 +15,6 @@ import { Plus } from "lucide-react";
 
 export default async function Home() {
   const allRestaurants = await getAllRestaurants();
-  const restaurantTags = await getRestaurantTags();
   const visitedRestaurants = allRestaurants.filter(
     (restaurant) => restaurant.visited
   );

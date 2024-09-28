@@ -1,10 +1,12 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import prisma from ".";
-import { createTagSchema } from "./schemas";
+import { createTagSchema, editTagSchema } from "./schemas";
 
 export const getAllRestaurants = async () => {
-  const restaurants = await prisma.restaurants.findMany();
+  const restaurants = await prisma.restaurants.findMany({
+    include: { tags: true },
+  });
   return restaurants;
 };
 
@@ -34,6 +36,9 @@ export const createRestaurant = async (restaurantData) => {
     const newRestaurant = await prisma.restaurants.create({
       data: {
         ...restaurantData,
+        tags: {
+          connect: restaurantData.tags.map((tag) => ({ id: tag })),
+        },
       },
     });
     revalidatePath("/");
@@ -45,7 +50,6 @@ export const createRestaurant = async (restaurantData) => {
 };
 
 export const updateRestaurant = async (restaurantData, id, path) => {
-  console.log(restaurantData);
   try {
     const updatedRestaurant = await prisma.restaurants.update({
       where: {
@@ -53,6 +57,10 @@ export const updateRestaurant = async (restaurantData, id, path) => {
       },
       data: {
         ...restaurantData,
+        tags: {
+          set: [], // first we need to reset the tags
+          connect: restaurantData.tags.map((tag) => ({ id: tag })), // then we set the tags here
+        },
       },
     });
     if (revalidatePath) revalidatePath(path);
@@ -87,6 +95,17 @@ export const getAllTags = async () => {
   return tags;
 };
 
+export const getAllTagsWithRelations = async () => {
+  const tags = await prisma.tags.findMany({
+    include: {
+      _count: {
+        select: { restaurants: true },
+      },
+    },
+  });
+  return tags;
+};
+
 export const getTagsByIds = async (ids) => {
   if (ids.length === 0) return [];
   const tags = await prisma.tags.findMany({ where: { id: { in: ids } } });
@@ -110,6 +129,25 @@ export const createTag = async (tagData) => {
   } catch {
     return null;
   }
+};
+
+export const updateTag = async (id, tagData) => {
+  const parseResult = editTagSchema.safeParse(tagData);
+  if (!parseResult) return null;
+
+  try {
+    await prisma.tags.update({
+      where: {
+        id,
+      },
+      data: {
+        ...tagData,
+      },
+    });
+  } catch {
+    return null;
+  }
+  revalidatePath("/tags");
 };
 
 export const getRestaurantTags = async () => {

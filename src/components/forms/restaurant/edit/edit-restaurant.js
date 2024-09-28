@@ -42,8 +42,6 @@ export default function EditRestaurantForm({
   const [tags, setTags] = useState(initialTags);
   const [isLoading, setIsLoading] = useState(false);
 
-  // console.log(restaurant);
-
   const editRestaurantForm = useForm({
     resolver: zodResolver(restaurantSchema),
     defaultValues: {
@@ -74,13 +72,10 @@ export default function EditRestaurantForm({
           "YYYY-MM-DD"
         ),
       }),
-      ...(tags.length > 0 && {
-        tags: tags.map((tag) => tag.id) || [],
-      }),
+      tags: tags.map((tag) => tag.id),
       updatedAt: timestamp,
       imageUrl,
     };
-    // console.log(updatePayload);
     try {
       await updateRestaurant(updatePayload, restaurant.id, "/");
       toast.success(`${restaurant.name} edited successfully!`);
