@@ -16,8 +16,9 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Trash } from "lucide-react";
 import { toast } from "sonner";
 import { deleteTag } from "@/db/queries";
+import { cn } from "@/lib/utils";
 
-export default function DeleteTagModal({ tag, disabled }) {
+export default function DeleteTagModal({ tag }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -41,7 +42,7 @@ export default function DeleteTagModal({ tag, disabled }) {
           variant="ghost"
           size="icon"
           onClick={() => setIsModalOpen(true)}
-          disabled={disabled}
+          disabled={tag._count.restaurants !== 0}
         >
           <Trash color="red" />
         </Button>

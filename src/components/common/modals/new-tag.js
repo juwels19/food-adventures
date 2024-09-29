@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 
-import { Pencil } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import EditTagForm from "@/components/forms/tags/edit-tag";
+import NewTagForm from "@/components/forms/tags/new-tag";
 import {
   Dialog,
   DialogContent,
@@ -14,25 +12,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 
-export default function EditTagModal({ tag }) {
+export default function NewTagModal() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
         <Button
-          size="icon"
-          variant="ghost"
           onClick={() => setIsModalOpen(true)}
+          size="lg"
+          className="text-md"
         >
-          <Pencil />
+          Create tag
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Tag</DialogTitle>
+          <DialogTitle>Create Tag</DialogTitle>
         </DialogHeader>
-        <EditTagForm tag={tag} setIsModalOpen={setIsModalOpen} />
+        <NewTagForm setIsModalOpen={setIsModalOpen} />
       </DialogContent>
     </Dialog>
   );

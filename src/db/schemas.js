@@ -1,3 +1,4 @@
+import { hexToRgb, isLightTextContrasting } from "@/lib/utils";
 import { z } from "zod";
 
 const baseRestaurantSchema = z.object({
@@ -50,10 +51,18 @@ export const restaurantSchema = z.intersection(
 );
 
 export const createTagSchema = z.object({
-  name: z.string(),
+  name: z.string().refine((value) => value !== "", "Name is required"),
   type: z.string(),
-  backgroundColour: z.string(),
-  fontColour: z.string(),
+  backgroundColour: z
+    .string()
+    .refine((value) => /^#[0-9A-F]{6}$/i.test(value), "Not a valid hex code")
+    .refine(
+      (value) => isLightTextContrasting(hexToRgb(value)),
+      "Colour must contrast white text"
+    ),
+  fontColour: z
+    .string()
+    .refine((value) => /^#[0-9A-F]{6}$/i.test(value), "Not a valid hex code"),
 });
 
 export const editTagSchema = z.object({

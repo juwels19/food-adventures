@@ -11,6 +11,16 @@ export const tagTableColumns = [
   {
     accessorKey: "backgroundColour",
     header: () => <div className="text-lg font-semibold">Colour</div>,
+    cell: ({ row }) => {
+      return (
+        <div
+          className="rounded-md text-white text-center p-1 max-w-[100px]"
+          style={{ backgroundColor: row.original.backgroundColour }}
+        >
+          {row.original.backgroundColour}
+        </div>
+      );
+    },
   },
   {
     accessorKey: "_count.restaurants",
@@ -24,7 +34,7 @@ export const tagTableColumns = [
       return (
         <div className="flex flex-row gap-2 justify-end">
           <EditTagModal tag={tag} />
-          <DeleteTagModal tag={tag} disabled={tag._count.restaurants !== 0} />
+          <DeleteTagModal tag={tag} />
         </div>
       );
     },
