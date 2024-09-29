@@ -15,6 +15,7 @@ import { editTagSchema } from "@/db/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -24,7 +25,7 @@ export default function EditTagForm({ tag, setIsModalOpen }) {
   const editTagForm = useForm({
     resolver: zodResolver(editTagSchema),
     mode: "all",
-    values: { name: tag.name },
+    values: { name: tag.name, backgroundColour: tag.backgroundColour },
   });
 
   const onSubmit = async () => {
@@ -46,20 +47,44 @@ export default function EditTagForm({ tag, setIsModalOpen }) {
         className="flex flex-col gap-2"
         onSubmit={editTagForm.handleSubmit(onSubmit)}
       >
-        {/* TAG NAME */}
-        <FormField
-          name="name"
-          control={editTagForm.control}
-          render={({ field }) => (
-            <FormItem>
-              <FormControl>
-                <Input {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" size="lg" disabled={isLoading}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* TAG NAME */}
+          <FormField
+            name="name"
+            control={editTagForm.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Name</FormLabel>
+                <FormControl>
+                  <Input {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* BACKGROUND COLOUR */}
+          <FormField
+            name="backgroundColour"
+            control={editTagForm.control}
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>Colour</FormLabel>
+                <FormControl>
+                  <HexColorPicker
+                    className="!w-full"
+                    color={field.value}
+                    onChange={(value) => {
+                      field.onChange(value);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <Button type="submit" size="lg" disabled={isLoading} className="mt-2">
           Save changes
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         </Button>
