@@ -103,7 +103,7 @@ export default function NewTagForm({ setIsModalOpen }) {
           type="submit"
           size="lg"
           disabled={isLoading}
-          className="text-md mt-2"
+          className="text-md mt-2 flex flex-row gap-2"
         >
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           Create tag

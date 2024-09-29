@@ -84,7 +84,12 @@ export default function EditTagForm({ tag, setIsModalOpen }) {
             )}
           />
         </div>
-        <Button type="submit" size="lg" disabled={isLoading} className="mt-2">
+        <Button
+          type="submit"
+          size="lg"
+          disabled={isLoading}
+          className="mt-2 text-md flex flex-row gap-2"
+        >
           Save changes
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         </Button>
