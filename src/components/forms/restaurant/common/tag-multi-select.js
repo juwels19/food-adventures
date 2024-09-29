@@ -24,7 +24,6 @@ function CustomTag(props) {
 }
 
 function CustomClearIndicator({ innerRef, innerProps, data }) {
-  console.log(data);
   return (
     <Badge
       ref={innerRef}
@@ -66,7 +65,6 @@ export default function TagMultiSelect(props) {
 
   const handleTagCreation = async (tagName) => {
     const colour = generateValidLightContrastColour();
-    console.log(colour);
     const tagData = {
       name: tagName,
       type: TAG_TYPES.RESTAURANT,

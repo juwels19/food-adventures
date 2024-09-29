@@ -28,6 +28,8 @@ export default function ImageDropzone({
     setFiles(acceptedFiles);
   }, []);
 
+  console.log(files);
+
   const { startUpload, isUploading } = useUploadThing("imageUploader", {
     onClientUploadComplete: (result) => {
       toast.dismiss();
@@ -58,19 +60,19 @@ export default function ImageDropzone({
     maxSize: 4e6,
   });
 
-  useEffect(() => {
-    // If we already have an imageUrl, we know that we're "Editing" the image
-    async function deleteFile() {
-      return await utDeleteFiles([imageUrl]);
-    }
-    if (imageUrl) {
-      deleteFile();
-    }
-    if (files.length > 0) {
-      toast.loading("Image is uploading...");
-      startUpload(files);
-    }
-  }, [files]);
+  // useEffect(() => {
+  //   // If we already have an imageUrl, we know that we're "Editing" the image
+  //   async function deleteFile() {
+  //     return await utDeleteFiles([imageUrl]);
+  //   }
+  //   if (imageUrl && files.length > 0) {
+  //     deleteFile();
+  //   }
+  //   if (files.length > 0) {
+  //     toast.loading("Image is uploading...");
+  //     startUpload(files);
+  //   }
+  // }, [files]);
 
   return (
     <div className="relative">

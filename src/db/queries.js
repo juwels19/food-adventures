@@ -126,6 +126,7 @@ export const createTag = async (tagData) => {
       },
     });
     revalidatePath("/tags");
+    revalidatePath("/");
     return newTag;
   } catch {
     return null;
@@ -149,6 +150,7 @@ export const updateTag = async (id, tagData) => {
     return null;
   }
   revalidatePath("/tags");
+  revalidatePath("/");
 };
 
 export const deleteTag = async (tagId) => {
