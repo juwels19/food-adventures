@@ -21,7 +21,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import { DeleteRestaurantModal, EditRestaurantModal } from "./modals";
 
 export default async function RestaurantCard({ restaurant }) {
@@ -74,7 +73,7 @@ export default async function RestaurantCard({ restaurant }) {
                 {tags.map((tag) => (
                   <Badge
                     key={tag.id}
-                    className={`bg-[${tag.backgroundColour}]`}
+                    style={{ background: tag.backgroundColour }}
                   >
                     {tag.name}
                   </Badge>

@@ -1,11 +1,9 @@
 /** @type {import('tailwindcss').Config} */
-import { TAG_COLOURS } from "./src/lib/tagColours.js";
 import { withUt } from "uploadthing/tw";
 
 module.exports = withUt({
   darkMode: ["class"],
   content: ["./src/**/*.{js,jsx}"],
-  safelist: TAG_COLOURS.map((colour) => `bg-[${colour}]`),
   theme: {
     container: {
       center: true,

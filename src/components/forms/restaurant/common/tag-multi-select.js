@@ -5,10 +5,9 @@ import Creatable from "react-select/creatable";
 import useSWR from "swr";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
-import { cn, fetcher } from "@/lib/utils";
+import { cn, fetcher, generateValidLightContrastColour } from "@/lib/utils";
 import { createTag } from "@/db/queries";
 import { TAG_TYPES } from "@/lib/constants";
-import { TAG_COLOURS } from "@/lib/tagColours";
 
 function CustomTag(props) {
   const { innerRef, innerProps, children, data } = props;
@@ -16,10 +15,8 @@ function CustomTag(props) {
     <Badge
       ref={innerRef}
       {...innerProps}
-      className={cn(
-        "!rounded-l-full !rounded-r-none pr-0 !cursor-default",
-        `bg-[${data.backgroundColour}]`
-      )}
+      style={{ background: data.backgroundColour }}
+      className={cn("!rounded-l-full !rounded-r-none pr-0 !cursor-default")}
     >
       {children}
     </Badge>
@@ -27,13 +24,16 @@ function CustomTag(props) {
 }
 
 function CustomClearIndicator({ innerRef, innerProps, data }) {
+  console.log(data);
   return (
     <Badge
       ref={innerRef}
       {...innerProps}
+      style={{
+        background: data.backgroundColour,
+      }}
       className={cn(
-        "!rounded-l-none !rounded-r-full mr-1 pr-1.5 pl-0 !cursor-pointer",
-        `bg-[${data.backgroundColour}]`
+        "!rounded-l-none !rounded-r-full mr-1 pr-1.5 pl-0 !cursor-pointer"
       )}
     >
       <X size={14} />
@@ -65,11 +65,12 @@ export default function TagMultiSelect(props) {
   });
 
   const handleTagCreation = async (tagName) => {
+    const colour = generateValidLightContrastColour();
+    console.log(colour);
     const tagData = {
       name: tagName,
       type: TAG_TYPES.RESTAURANT,
-      backgroundColour:
-        TAG_COLOURS[Math.floor(Math.random() * TAG_COLOURS.length)],
+      backgroundColour: colour,
       fontColour: "#F4FFF8",
     };
     const result = await createTag(tagData);
