@@ -67,4 +67,11 @@ export const createTagSchema = z.object({
 
 export const editTagSchema = z.object({
   name: z.string({ required_error: "Name is required" }),
+  backgroundColour: z
+    .string()
+    .refine((value) => /^#[0-9A-F]{6}$/i.test(value), "Not a valid hex code")
+    .refine(
+      (value) => isLightTextContrasting(hexToRgb(value)),
+      "Colour must contrast white text"
+    ),
 });

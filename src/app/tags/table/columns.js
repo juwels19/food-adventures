@@ -7,6 +7,9 @@ export const tagTableColumns = [
   {
     accessorKey: "name",
     header: () => <div className="text-lg font-semibold">Name</div>,
+    cell: ({ row }) => {
+      return <span className="font-semibold">{row.original.name}</span>;
+    },
   },
   {
     accessorKey: "backgroundColour",
