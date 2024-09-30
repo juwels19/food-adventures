@@ -1,56 +1,17 @@
 "use client";
 
-import { X } from "lucide-react";
-import Creatable from "react-select/creatable";
 import useSWR from "swr";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
-import { cn, fetcher, generateValidLightContrastColour } from "@/lib/utils";
+
 import { createTag } from "@/db/queries";
 import { TAG_TYPES } from "@/lib/constants";
-
-function CustomTag(props) {
-  const { innerRef, innerProps, children, data } = props;
-  return (
-    <Badge
-      ref={innerRef}
-      {...innerProps}
-      style={{ background: data.backgroundColour }}
-      className={cn("!rounded-l-full !rounded-r-none pr-0 !cursor-default")}
-    >
-      {children}
-    </Badge>
-  );
-}
-
-function CustomClearIndicator({ innerRef, innerProps, data }) {
-  return (
-    <Badge
-      ref={innerRef}
-      {...innerProps}
-      style={{
-        background: data.backgroundColour,
-      }}
-      className={cn(
-        "!rounded-l-none !rounded-r-full mr-1 pr-1.5 pl-0 !cursor-pointer"
-      )}
-    >
-      <X size={14} />
-    </Badge>
-  );
-}
-
-function CustomContainer({ innerRef, innerProps, children }) {
-  return (
-    <div
-      ref={innerRef}
-      {...innerProps}
-      className="flex flex-row bg-transparent"
-    >
-      {children}
-    </div>
-  );
-}
+import Creatable from "react-select/creatable";
+import { fetcher, generateValidLightContrastColour } from "@/lib/utils";
+import {
+  CustomClearIndicator,
+  CustomContainer,
+  CustomTag,
+} from "@/components/common/tags/common";
 
 export default function TagMultiSelect(props) {
   const {

@@ -48,10 +48,10 @@ export default function DeleteRestaurantModal({
         <Button
           variant="outline"
           size="icon"
-          className="rounded-full h-6 w-6 lg:h-8 lg:w-8"
+          className="rounded-full size-7 lg:size-8"
           onClick={() => setIsModalOpen(true)}
         >
-          <Trash className="w-3 h-3 md:w-4 md:h-4" color="red" />
+          <Trash className="size-4" color="red" />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

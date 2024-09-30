@@ -17,16 +17,28 @@ export const getRestaurant = async (id) => {
   return restaurant;
 };
 
-export const getAllVisitedRestaurants = async () => {
+export const getAllVisitedRestaurants = async (tagIdsForFiltering = []) => {
   const restaurants = await prisma.restaurants.findMany({
-    where: { visited: { equals: true } },
+    where: {
+      ...(tagIdsForFiltering && {
+        tags: { some: { id: { in: tagIdsForFiltering } } },
+      }),
+      visited: { equals: true },
+    },
+    include: { tags: true },
   });
   return restaurants;
 };
 
-export const getNonVisitedRestaurants = async () => {
+export const getAllNonVisitedRestaurants = async (tagIdsForFiltering = []) => {
   const restaurants = await prisma.restaurants.findMany({
-    where: { visited: { equals: false } },
+    where: {
+      ...(tagIdsForFiltering && {
+        tags: { some: { id: { in: tagIdsForFiltering } } },
+      }),
+      visited: { equals: false },
+    },
+    include: { tags: true },
   });
   return restaurants;
 };

@@ -1,26 +1,15 @@
 import Link from "next/link";
 import ROUTES from "@/lib/routes";
-import RestaurantCard from "@/components/common/restaurant-card";
-import {
-  getAllRestaurants,
-  getAllVisitedRestaurants,
-  getNonVisitedRestaurants,
-  getRestaurantTags,
-} from "@/db/queries";
+import { getAllRestaurants } from "@/db/queries";
 import RestaurantsMap from "@/components/maps/restaurants-maps";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import PageSubHeading from "@/components/common/page-subheading";
 import { Plus, Settings } from "lucide-react";
+import FilterableCardLayout from "@/components/common/filterable-card-layout";
 
 export default async function Home() {
   const allRestaurants = await getAllRestaurants();
-  const visitedRestaurants = allRestaurants.filter(
-    (restaurant) => restaurant.visited
-  );
-  const nonVisitedRestaurants = allRestaurants.filter(
-    (restaurant) => !restaurant.visited
-  );
 
   return (
     <div className="flex flex-col gap-2 md:gap-4 w-full">
@@ -44,17 +33,9 @@ export default async function Home() {
       </div>
       <RestaurantsMap restaurants={allRestaurants} />
       <PageSubHeading>{`Places we've been!`}</PageSubHeading>
-      <div className="w-full grid grid-cols-1 min-[640px]:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-stretch">
-        {visitedRestaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant.name} restaurant={restaurant} />
-        ))}
-      </div>
+      <FilterableCardLayout isVisited={true} />
       <PageSubHeading>{`Places to visit`}</PageSubHeading>
-      <div className="w-full grid grid-cols-1 min-[640px]:grid-cols-2 lg:grid-cols-3 gap-4 justify-items-stretch">
-        {nonVisitedRestaurants.map((restaurant) => (
-          <RestaurantCard key={restaurant.name} restaurant={restaurant} />
-        ))}
-      </div>
+      <FilterableCardLayout isVisited={false} />
     </div>
   );
 }

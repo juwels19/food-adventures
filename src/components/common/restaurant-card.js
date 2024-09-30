@@ -1,19 +1,10 @@
+"use client";
+
 import React from "react";
 import dayjs from "dayjs";
 import Image from "next/image";
-import Link from "next/link";
 
-import { getTagsByIds } from "@/db/queries";
-import ROUTES from "@/lib/routes";
-
-import {
-  Star,
-  Utensils,
-  MapPinIcon,
-  Calendar,
-  Pencil,
-  Trash,
-} from "lucide-react";
+import { Star, Utensils, MapPinIcon, Calendar } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -23,7 +14,7 @@ import {
 import { Badge } from "../ui/badge";
 import { DeleteRestaurantModal, EditRestaurantModal } from "./modals";
 
-export default async function RestaurantCard({ restaurant }) {
+export default function RestaurantCard({ restaurant }) {
   const tags = restaurant.tags.map((tag) => ({
     ...tag,
     label: tag.name,
