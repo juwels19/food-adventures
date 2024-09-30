@@ -76,6 +76,7 @@ export const updateRestaurant = async (restaurantData, id, path) => {
       },
     });
     if (revalidatePath) revalidatePath(path);
+    mutate("");
     return updatedRestaurant;
   } catch (err) {
     console.log(err);

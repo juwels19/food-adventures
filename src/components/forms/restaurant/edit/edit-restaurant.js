@@ -5,7 +5,8 @@ import dayjs from "dayjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Loader2, Pencil, Trash } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { useSWRConfig } from "swr";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -41,6 +42,7 @@ export default function EditRestaurantForm({
 }) {
   const [tags, setTags] = useState(initialTags);
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate } = useSWRConfig();
 
   const editRestaurantForm = useForm({
     resolver: zodResolver(restaurantSchema),
@@ -79,6 +81,8 @@ export default function EditRestaurantForm({
     try {
       await updateRestaurant(updatePayload, restaurant.id, "/");
       toast.success(`${restaurant.name} edited successfully!`);
+      mutate("/api/restaurants/visited");
+      mutate("/api/restaurants/not-visited");
     } catch (err) {
       toast.error(`${restaurant.name} failed to update! Please try again.`);
     } finally {
