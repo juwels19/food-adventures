@@ -55,7 +55,7 @@ export default function ImageDropzone({
     disabled,
     onDrop,
     maxFiles: 1,
-    maxSize: 4e6,
+    maxSize: 16e6,
   });
 
   useEffect(() => {
